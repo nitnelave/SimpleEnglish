@@ -4,12 +4,16 @@ mod resolution;
 
 fn main() {
     let tree = parse::parse(
-        "To start:
-  Display \"Hello World!\"
-    ",
+        r#"
+To greet the world:
+  Display \"Hello World!\".
+
+To start:
+  Greet the world.
+"#,
     );
-    println!("{:?}", tree);
+    println!("Parse tree: {:?}", tree);
     let ast = resolution::resolve(tree.unwrap());
-    println!("{:?}", ast);
+    println!("Resolved tree: {:?}", ast);
     execution::execute(ast.unwrap()).unwrap();
 }

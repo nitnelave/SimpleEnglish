@@ -1,11 +1,11 @@
 use logos::Logos;
 
 #[derive(Debug, Logos, PartialEq, Eq)]
-pub enum Token {
-    #[regex("\"([^\"\\\\]*(\\\\\")*)*\"")]
-    String,
-    #[regex("[a-zA-Z][a-zA-Z0-9]*")]
-    Word,
+pub enum Token<'a> {
+    #[regex(r#""([^"\\]*(\\")*)*""#, |lex| lex.slice())]
+    String(&'a str),
+    #[regex("[a-zA-Z][a-zA-Z0-9]*", |lex| lex.slice())]
+    Word(&'a str),
     #[token(",")]
     Comma,
     #[token(".")]
@@ -14,8 +14,8 @@ pub enum Token {
     Colon,
     #[token("\n")]
     Newline,
-    #[regex("  +")]
-    Whitespace,
+    #[regex("  +", |lex| lex.slice().len())]
+    Whitespace(usize),
     #[token(" ", logos::skip)]
     #[error]
     Error,
@@ -39,5 +39,3 @@ pub enum Node {
 
 #[derive(Debug)]
 pub struct ParseError(pub String);
-
-pub type Lexer<'a> = logos::Lexer<'a, Token>;
