@@ -1,15 +1,29 @@
+use super::parse::SimpleValue;
 use crate::resolution as ast;
 
 #[derive(Debug)]
 pub struct ExecutionError(pub String);
 
 fn get_start(node: &ast::Node) -> Option<&ast::FunctionDefinition> {
-    if let ast::Node::FunctionDefinition(def) = node {
-        if def.name == "To start" {
-            return Some(def);
-        }
+    let ast::Node::FunctionDefinition(def) = node;
+    if def.name == "To start" {
+        return Some(def);
     }
     None
+}
+
+fn call_function(call: &ast::FunctionCall) -> Result<(), ExecutionError> {
+    let mut name = String::new();
+    for term in call.terms.iter() {
+        match term {
+            SimpleValue::Word(s) => name.push_str(&s),
+            SimpleValue::String(s) => name.push_str(&s),
+            SimpleValue::Integer(i) => name.push_str(&format!("{}", i)),
+        }
+        name.push(' ');
+    }
+    println!("Calling unresolved function {}", name);
+    Ok(())
 }
 
 fn run_statement(
@@ -18,6 +32,7 @@ fn run_statement(
 ) -> Result<(), ExecutionError> {
     match statement {
         ast::Statement::Display(message) => println!("{}", message),
+        ast::Statement::FunctionCall(call) => call_function(call)?,
     }
     Ok(())
 }

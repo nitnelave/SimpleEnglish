@@ -5,9 +5,18 @@ fn extract_arguments(_function_name: &str) -> Result<Vec<TypedVariable>, Resolut
     Ok(Vec::new())
 }
 
+fn resolve_function_call(
+    call: parse::definitions::FunctionCall,
+) -> Result<FunctionCall, ResolutionError> {
+    Ok(FunctionCall { terms: call.terms })
+}
+
 fn resolve_statement(raw_statement: parse::Statement) -> Result<Statement, ResolutionError> {
     match raw_statement {
         parse::Statement::Display(message) => Ok(Statement::Display(message)),
+        parse::Statement::FunctionCall(call) => {
+            Ok(Statement::FunctionCall(resolve_function_call(call)?))
+        }
     }
 }
 

@@ -1,3 +1,5 @@
+use super::parse::SimpleValue;
+
 #[derive(Debug)]
 pub struct ResolutionError(String);
 
@@ -29,8 +31,14 @@ pub struct FunctionDefinition {
 }
 
 #[derive(Debug)]
+pub struct FunctionCall {
+    pub terms: Vec<SimpleValue>,
+}
+
+#[derive(Debug)]
 pub enum Statement {
     Display(String),
+    FunctionCall(FunctionCall),
 }
 
 #[derive(Debug)]
